@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>VergeIO 專案報備</title>
+<style>
+:root{
+  --ground:#f3f4f6; --panel:#ffffff; --ink:#1b2430; --muted:#5f6b7a; --faint:#8a94a3; --line:#dde1e7; --line-soft:#eceef2;
+  --brand:#14233a; --brand-2:#24395a; --brand-ink:#ffffff; --accent:#c8661a; --sel:#eef2f8; --fb:#c9ced6;
+  --ok:#2f6b3a; --err:#b42318; --err-bg:#fdf1f0; --warn-bg:#fbf5ea; --warn-ink:#6e4a0e; --warn-line:#d9a441;
+  --field:#ffffff; --head:#ffffff; --btn:#14233a; --btn-hover:#24395a;
+  --body:"Microsoft JhengHei","微軟正黑體","Noto Sans TC","PingFang TC",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --ground:#0f141b; --panel:#171e28; --ink:#e6e9ee; --muted:#a3adba; --faint:#7c8695; --line:#2c3644; --line-soft:#232c38;
+  --brand:#8fb0de; --brand-2:#8fb0de; --brand-ink:#ffffff; --accent:#e08a43; --sel:#1d2a3c; --fb:#36414f;
+  --ok:#8fcf9b; --err:#ff9a8f; --err-bg:#331c1c; --warn-bg:#2f2614; --warn-ink:#efd7a6; --warn-line:#b8862e;
+  --field:#121922; --head:#171e28; --btn:#2c4670; --btn-hover:#36578a; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+
+/* 頁首：公司抬頭＋標題＋活動重點 */
+.top{background:var(--head);border-top:4px solid var(--brand);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top .in{max-width:1180px;margin:0 auto;padding:16px 16px 0}
+.org{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
+.org b{font-size:13px;letter-spacing:.18em;color:var(--brand-2);font-weight:700}
+.org i{width:1px;height:14px;background:var(--line);display:inline-block}
+.title{padding:22px 0 18px}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--accent);font-weight:700}
+h1{margin:4px 0 6px;font-size:26px;line-height:1.35;font-weight:700;color:var(--ink)}
+.title p{margin:0;font-size:14px;color:var(--muted);max-width:720px}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border-top:1px solid var(--line-soft)}
+.facts div{padding:12px 16px 14px 0}
+.facts div+div{padding-left:16px;border-left:1px solid var(--line-soft)}
+.facts dt{font-size:12px;color:var(--faint);margin-bottom:2px}
+.facts dd{margin:0;font-size:14px;font-weight:700;color:var(--ink)}
+@media (max-width:760px){.facts{grid-template-columns:1fr 1fr}.facts div:nth-child(3){padding-left:0;border-left:0}
+  .facts div:nth-child(n+3){border-top:1px solid var(--line-soft)}}
+
+/* 版面：電腦版右側說明欄 */
+.layout{max-width:1180px;margin:0 auto;padding:24px 16px 48px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
+@media (max-width:1023px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:static!important}}
+.main{display:flex;flex-direction:column;gap:16px;min-width:0}
+#f{display:flex;flex-direction:column;gap:16px}
+.side{position:sticky;top:16px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.side .box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+.side h3{margin:0 0 12px;font-size:13px;letter-spacing:.04em;color:var(--brand-2)}
+.flow{list-style:none;margin:0;padding:0;counter-reset:f}
+.flow li{counter-increment:f;position:relative;padding:0 0 12px 32px;font-size:13px;color:var(--muted)}
+.flow li:last-child{padding-bottom:0}
+.flow li::before{content:counter(f);position:absolute;left:0;top:2px;width:20px;height:20px;border:1px solid var(--brand-2);color:var(--brand-2);border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.flow b{display:block;color:var(--ink);font-size:14px}
+.side ul.note{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
+.side ul.note li+li{margin-top:6px}
+.contact{font-size:13px;color:var(--muted)}
+.contact div+div{margin-top:10px;padding-top:10px;border-top:1px solid var(--line-soft)}
+.contact b{display:block;color:var(--ink);font-size:14px}
+.contact a{color:var(--brand-2);text-decoration:none;word-break:break-all}
+
+/* 區塊 */
+.grid>*,label.f,input,select,textarea{min-width:0;max-width:100%}
+.banner{padding:10px 14px;border-radius:4px;font-size:13px;border-left:3px solid}
+.banner.warn{background:var(--warn-bg);color:var(--warn-ink);border-color:var(--warn-line)}
+.banner.err{background:var(--err-bg);color:var(--err);border-color:var(--err)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:0 24px 24px}
+@media (max-width:560px){.card{padding:0 16px 20px}}
+.sec-h{display:flex;gap:14px;align-items:baseline;padding:18px 0 14px;margin-bottom:18px;border-bottom:1px solid var(--line-soft)}
+.step{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.04em;font-variant-numeric:tabular-nums;flex:none}
+.sec-h h2{margin:0;font-size:17px;font-weight:700;color:var(--ink)}
+.sec-h .sub{margin:2px 0 0}
+.sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(250px,100%),1fr));gap:16px 18px}
+.full{grid-column:1/-1}
+label.f,div.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--ink)}
+.req::after{content:" *";color:var(--err)}
+.req-note{margin:0;font-size:13px;color:var(--muted)}
+.req-note b{color:var(--err)}
+.hint{font-weight:400;color:var(--faint);font-size:12px}
+input,select,textarea{font:inherit;font-size:16px;font-weight:400;color:var(--ink);background:var(--field);border:1px solid var(--fb);border-radius:4px;padding:9px 11px;min-height:44px;width:100%}
+input::placeholder,textarea::placeholder{color:var(--faint)}
+textarea{min-height:84px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(36,57,90,.15)}
+.bad input,.bad select,.bad textarea{border-color:var(--err);background:var(--err-bg)}
+.bad .radios label{border-color:var(--err)}
+.msg{color:var(--err);font-size:12px;font-weight:400}
+.msg:empty{display:none}
+.ban{font-size:12px;font-weight:400;color:var(--muted)}
+.ban.ok{color:var(--ok)}
+.ban.warn{color:var(--warn-ink);background:var(--warn-bg);border-left:3px solid var(--warn-line);padding:4px 8px}
+.bs{display:flex;flex-direction:column;gap:6px;margin-top:-6px}
+.linkbtn{font:inherit;font-size:13px;color:var(--brand-2);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;align-self:flex-start;min-height:0}
+.bs-panel{background:var(--ground);border:1px solid var(--line-soft);border-radius:4px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.bs-list{display:flex;flex-direction:column;gap:4px}
+.bs-item{font:inherit;font-size:14px;text-align:left;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px 12px;min-height:44px;cursor:pointer}
+.bs-item:hover{border-color:var(--brand-2)}
+.bs-item small{color:var(--muted);font-size:12px}
+.bs-note{font-size:12px;color:var(--muted)}
+.bs-note a{color:var(--brand-2)}
+input[readonly]{background:var(--ground);color:var(--muted);cursor:not-allowed}
+.radios{display:flex;gap:8px;flex-wrap:wrap}
+.radios label{display:flex;align-items:center;gap:8px;border:1px solid var(--fb);background:var(--field);border-radius:4px;padding:8px 14px;min-height:44px;font-weight:400;font-size:14px;cursor:pointer}
+.radios label small{color:var(--faint);font-size:12px}
+.radios input{width:auto;min-height:0;margin:0;accent-color:var(--brand-2)}
+.radios label:has(input:checked){border-color:var(--brand-2);background:var(--sel);box-shadow:inset 0 0 0 1px var(--brand-2)}
+.btn{font:inherit;font-weight:700;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:10px 18px;min-height:44px;cursor:pointer}
+.btn:hover{border-color:var(--brand-2)}
+.btn.primary{background:var(--btn);color:var(--brand-ink);border-color:var(--btn);width:100%;font-size:16px;padding:13px;letter-spacing:.1em}
+.btn.primary:hover{background:var(--btn-hover);border-color:var(--btn-hover)}
+.btn.primary:disabled{opacity:.6;cursor:wait}
+.tips{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.tips:empty{display:none}
+.tip{background:var(--ground);color:var(--ink);border-left:3px solid var(--brand-2);padding:8px 12px;font-size:13px}
+.tip.warn{background:var(--warn-bg);color:var(--warn-ink);border-color:var(--warn-line)}
+.est{margin-top:20px;border:1px solid var(--line);border-radius:4px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:hidden}
+.est div{display:flex;flex-direction:column;padding:12px 16px}
+.est div+div{border-left:1px solid var(--line-soft)}
+.est small{font-size:12px;color:var(--muted)}
+.est b{font-size:19px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.est div:first-child b{color:var(--brand-2)}
+.est .note{grid-column:1/-1;display:block;font-size:12px;color:var(--muted);background:var(--ground);border-left:0!important;border-top:1px solid var(--line-soft)}
+@media (max-width:560px){.est{grid-template-columns:1fr}.est div+div{border-left:0;border-top:1px solid var(--line-soft)}}
+.split{margin-top:20px;padding-top:18px;border-top:1px dashed var(--line)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);font-weight:400}
+.check input{width:auto;min-height:0;margin-top:4px;accent-color:var(--brand-2)}
+.consent{font-size:12px;color:var(--faint);margin:20px 0 12px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.done{text-align:center;padding:36px 24px}
+.done .mark{width:52px;height:52px;margin:0 auto;border-radius:50%;border:2px solid var(--ok);color:var(--ok);font-size:26px;line-height:48px}
+.done .big{font-size:22px;font-weight:700;color:var(--ink);margin:12px 0 4px}
+.done .lbl{font-size:12px;color:var(--faint);margin-top:12px}
+.done .id{display:inline-block;font-size:22px;font-weight:700;letter-spacing:.06em;color:var(--brand-2);border:1px solid var(--line);border-radius:4px;padding:6px 18px;margin:4px 0 8px;font-variant-numeric:tabular-nums}
+.summary{text-align:left;margin:16px auto 0;max-width:480px;font-size:14px;border:1px solid var(--line);border-radius:4px}
+.summary div{display:flex;gap:12px;padding:8px 14px}
+.summary div+div{border-top:1px solid var(--line-soft)}
+.summary b{flex:none;width:6.5em;color:var(--muted);font-weight:400}
+footer{border-top:1px solid var(--line);background:var(--head);color:var(--faint);font-size:12px;text-align:center;line-height:1.8;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+
+/* ===== 平板（600–1023px）：表單一欄，說明欄移到表單下方、三個框橫排 ===== */
+@media (max-width:1023px){
+  .side{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));align-items:start}
+}
+
+/* ===== 手機（600px 以下）：字級與間距收斂、選項加大好點 ===== */
+@media (max-width:600px){
+  .top .in{padding-top:12px}
+  .org{font-size:12px;padding-bottom:10px}
+  .title{padding:14px 0 12px}
+  h1{font-size:22px}
+  .title p{font-size:13px}
+  .facts div{padding:10px 10px 10px 0}
+  .facts div+div{padding-left:10px}
+  .facts div:nth-child(3){padding-left:0}
+  .facts dd{font-size:13px}
+  .layout{padding:16px 12px 32px;gap:16px}
+  .card{padding:0 14px 18px}
+  .sec-h{gap:10px;padding:14px 0 12px;margin-bottom:14px}
+  .sec-h h2{font-size:16px}
+  .sec-h .sub{font-size:12px}
+  .grid{gap:14px}
+  /* 配置、租賃方案：一行一個選項 */
+  [data-group] .radios{display:grid;grid-template-columns:1fr}
+  [data-group] .radios label{flex-wrap:wrap}
+  /* 需求重點、加購服務：兩欄 */
+  #needs,#addons{display:grid;grid-template-columns:1fr 1fr}
+  #needs label,#addons label{padding:8px 10px}
+  /* 試算：一行一筆「項目｜金額」 */
+  .est div{flex-direction:row;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 14px}
+  .est b{font-size:17px}
+  .est .note{display:block}
+  .btn.primary{padding:14px}
+  .done{padding:28px 14px}
+  .summary div{padding:8px 12px}
+  .summary b{width:5.5em}
+}
+
+/* ===== 觸控裝置：iOS 日期欄預設置中且高度不一，改成跟其他欄位一致 ===== */
+@media (hover:none) and (pointer:coarse){
+  input[type=date]{-webkit-appearance:none;appearance:none;display:block;text-align:left;line-height:24px}
+  input[type=date]::-webkit-date-and-time-value{text-align:left}
+  .radios label{min-height:48px}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="org"><b>XANDER</b><i></i>建達國際股份有限公司</div>
+  <div class="title">
+    <div class="eyebrow">VergeIO × Dell PowerEdge R440｜軟硬整合租賃方案</div>
+    <h1>SI 夥伴專案報備</h1>
+    <p>送出後由建達國際於 2 個工作天內確認回覆；核定結果、獎金與活動名額以建達回覆為準。</p>
+  </div>
+  <dl class="facts" id="promo"></dl>
+</div></header>
+
+<div class="layout">
+<main class="main">
+  <div class="banner warn" id="testBanner" hidden>測試模式：尚未接上後台，可以試填與檢查欄位，但送出不會存檔。</div>
+  <div class="banner warn" id="endBanner" hidden></div>
+
+  <form id="f" novalidate>
+    <div class="hp" aria-hidden="true"><label>網站<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <p class="req-note">標示 <b>*</b> 的欄位為必填</p>
+
+    <section class="card">
+      <div class="sec-h"><span class="step">01</span><div><h2>SI 夥伴／報備人</h2><p class="sub">先填統一編號，公司名稱會依經濟部登記自動帶出。</p></div></div>
+      <div class="grid">
+        <label class="f"><span class="req">統一編號 <span class="hint">8 碼，可看發票或名片</span></span><input name="統一編號" required inputmode="numeric" maxlength="8" autocomplete="off"><span class="msg"></span><span class="ban" id="banInfo" hidden></span></label>
+        <div class="bs full"><button type="button" class="linkbtn" id="bsToggle">不知道統編？用公司名稱查</button>
+          <div class="bs-panel" id="bsPanel" hidden>
+            <input id="bsQ" maxlength="30" autocomplete="off" placeholder="輸入公司名稱關鍵字，至少 2 個字" aria-label="用公司名稱查統一編號">
+            <div class="bs-list" id="bsList"></div>
+            <div class="bs-note" id="bsNote"></div>
+          </div></div>
+        <label class="f full"><span class="req">SI 公司名稱</span><input name="SI 公司名稱" required maxlength="100" autocomplete="organization"><span class="msg"></span></label>
+        <label class="f"><span class="req">報備業務</span><input name="報備業務" required maxlength="50" autocomplete="name"><span class="msg"></span></label>
+        <label class="f"><span class="req">聯絡電話</span><input name="聯絡電話" required maxlength="30" inputmode="tel" autocomplete="tel"><span class="msg"></span></label>
+        <label class="f"><span class="req">聯絡 Email <span class="hint">收件確認信會寄到這裡</span></span><input name="聯絡 Email" type="email" required maxlength="100" autocomplete="email"><span class="msg"></span></label>
+        <label class="check full"><input type="checkbox" id="remember" checked>在這台裝置記住公司與聯絡人資料，下次不用重填</label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-h"><span class="step">02</span><div><h2>終端客戶</h2><p class="sub">同一客戶以先完成報備者優先，請填客戶全名。</p></div></div>
+      <div class="grid">
+        <label class="f full"><span class="req">客戶名稱（全名）</span><input name="客戶名稱" required maxlength="100"><span class="msg"></span></label>
+        <label class="f"><span>縣市</span><select name="縣市"><option value="">請選擇</option><option>基隆市</option><option>臺北市</option><option>新北市</option><option>桃園市</option><option>新竹市</option><option>新竹縣</option><option>苗栗縣</option><option>臺中市</option><option>彰化縣</option><option>南投縣</option><option>雲林縣</option><option>嘉義市</option><option>嘉義縣</option><option>臺南市</option><option>高雄市</option><option>屏東縣</option><option>宜蘭縣</option><option>花蓮縣</option><option>臺東縣</option><option>澎湖縣</option><option>金門縣</option><option>連江縣</option></select></label>
+        <label class="f"><span>客戶窗口 <span class="hint">姓名／職稱</span></span><input name="客戶窗口" maxlength="100" placeholder="例：王經理／資訊部"></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-h"><span class="step">03</span><div><h2>客戶現有環境</h2><p class="sub">授權續約與伺服器汰換的時間點，就是換平台的最佳時機。</p></div></div>
+      <div class="grid">
+        <label class="f"><span class="req">現有虛擬化平台</span><select name="現有虛擬化平台" required><option value="">請選擇</option><option>VMware vSphere</option><option>Microsoft Hyper-V</option><option>Nutanix</option><option>Citrix</option><option>Proxmox</option><option>尚未虛擬化</option><option>其他</option></select><span class="msg"></span></label>
+        <label class="f"><span class="req">現有 VM 數量 <span class="hint">大約即可</span></span><input name="現有 VM 數量" required inputmode="numeric" maxlength="5" placeholder="例：25"><span class="msg"></span></label>
+        <label class="f"><span>授權到期日</span><input name="授權到期" type="date"><span class="msg"></span></label>
+        <label class="f"><span>伺服器保固到期日</span><input name="伺服器保固到期" type="date"><span class="msg"></span></label>
+        <div class="f full"><span>客戶需求重點 <span class="hint">可複選</span></span>
+          <div class="radios" id="needs"><label><input type="checkbox" value="降低授權成本">降低授權成本</label><label><input type="checkbox" value="伺服器汰換">伺服器汰換</label><label><input type="checkbox" value="需要 HA 容錯">需要 HA 容錯</label><label><input type="checkbox" value="備份與災難復原">備份與災難復原</label><label><input type="checkbox" value="以租代買">以租代買</label><label><input type="checkbox" value="建置私有雲">建置私有雲</label></div></div>
+        <label class="f full"><span>客戶現狀補充</span><textarea name="客戶現狀" maxlength="500" placeholder="例：VMware 明年 3 月續約報價漲 3 倍，現有 3 台主機 2019 年購入"></textarea></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-h"><span class="step">04</span><div><h2>方案需求</h2><p class="sub">還沒確定可先選「尚未確定」，建達會依客戶 VM 數量、負載與預算協助配置。</p></div></div>
+      <div class="grid">
+        <div class="f full" data-group="配置"><span class="req">配置（每 node）</span>
+          <div class="radios"><label><input type="radio" name="配置" value="輕量級">輕量級 <small>128 GB 記憶體</small></label><label><input type="radio" name="配置" value="中量級">中量級 <small>256 GB 記憶體</small></label><label><input type="radio" name="配置" value="尚未確定">尚未確定</label></div>
+          <span class="msg"></span></div>
+        <div class="f full" data-group="租賃方案"><span class="req">租賃方案</span>
+          <div class="radios"><label><input type="radio" name="租賃方案" value="1 年租賃">1 年租賃</label><label><input type="radio" name="租賃方案" value="3 年租賃">3 年租賃 <small>主推，平均年費約 85 折</small></label><label><input type="radio" name="租賃方案" value="3 年租售">3 年租售 <small>期滿保有設備</small></label><label><input type="radio" name="租賃方案" value="尚未確定">尚未確定</label></div>
+          <span class="msg"></span></div>
+        <label class="f"><span class="req">Node 數量 <span class="hint">台</span></span><input name="Node 數量" required inputmode="numeric" maxlength="3" placeholder="例：2"><span class="msg"></span></label>
+        <label class="f"><span class="req">案件階段</span><select name="案件階段" required><option value="">請選擇</option><option value="需求確認">需求確認｜了解需求規格預算</option><option value="方案提報">方案提報｜已提供產品與報價</option><option value="議價評估">議價評估｜比價或內部簽核中</option><option value="確定採購">確定採購｜已確認下單</option></select><span class="msg"></span></label>
+        <label class="f"><span class="req">預估簽約日</span><input name="預估簽約日" type="date" required><span class="msg"></span></label>
+        <div class="f full"><span>加購服務 <span class="hint">不含在租賃價內，另計報價</span></span>
+          <div class="radios" id="addons"><label><input type="checkbox" value="現場安裝">現場安裝</label><label><input type="checkbox" value="VM 移轉">VM 移轉</label></div></div>
+        <label class="f full"><span>競爭對手／比較方案</span><input name="競爭對手 / 競品" maxlength="200" placeholder="例：續約 VMware、Nutanix、Proxmox"></label>
+        <label class="f full"><span>案源說明</span><input name="案源說明" maxlength="200" placeholder="例：既有客戶續約／客戶主動詢價／標案"></label>
+      </div>
+      <div class="est" id="est"></div>
+      <div class="tips" id="tips"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-h"><span class="step">05</span><div><h2>客戶到訪簡報與建達窗口</h2><p class="sub">終端客戶完成到訪簡報，贈 7-ELEVEN 禮券 500 元。</p></div></div>
+      <div class="grid">
+        <label class="f"><span class="req">到訪簡報</span><select name="到訪簡報" required><option value="">請選擇</option><option>已約好時間</option><option>請建達協助安排</option><option>暫不需要</option></select><span class="msg"></span></label>
+        <label class="f" id="pDateBox" hidden><span class="req">簡報日期</span><input name="簡報日期" type="date"><span class="msg"></span></label>
+      </div>
+      <div class="grid split">
+        <label class="f"><span class="req">建達部門</span><select name="建達部門" required><option value="">請選擇</option><option>流通事業部</option><option>加值事業部</option><option>商用事業部</option><option>家電事業部</option></select><span class="msg"></span></label>
+        <label class="f"><span class="req">建達業務</span><select name="建達業務" required disabled><option value="">請先選部門</option></select><span class="msg"></span></label>
+      </div>
+      <p class="consent">送出即表示同意：所填資料僅用於 VergeIO 專案報備、審核與後續聯繫。</p>
+      <div class="banner err" id="formErr" hidden></div>
+      <button type="submit" class="btn primary" id="submitBtn">送出報備</button>
+    </section>
+  </form>
+
+  <section class="card done" id="done" hidden>
+    <div class="mark">✓</div>
+    <div class="big">已收到您的報備</div>
+    <div class="lbl">報備編號</div>
+    <div class="id" id="doneId"></div>
+    <p class="sub" id="doneText"></p>
+    <div class="summary" id="doneSum"></div>
+    <p><button type="button" class="btn" id="again">再填一筆</button></p>
+  </section>
+
+</main>
+
+<aside class="side">
+  <div class="box">
+    <h3>報備流程</h3>
+    <ol class="flow">
+      <li><b>專案報備</b>報備即領 15% 獎金，並鎖定活動名額</li>
+      <li><b>建達審核</b>2 個工作天內回覆核定結果</li>
+      <li><b>客戶到訪簡報</b>完成簡報贈 7-ELEVEN 禮券 500 元</li>
+      <li><b>配置報價成交</b>依 VM 數量、負載與預算配置，成交領 85%</li>
+    </ol>
+  </div>
+  <div class="box">
+    <h3>方案說明</h3>
+    <ul class="note">
+      <li>價格含軟硬體 5×8 NBD 保固與遠端技術支援</li>
+      <li>現場安裝、VM 移轉另計；促銷方案不提供 POC</li>
+      <li>單台 node 無伺服器 HA，關鍵系統請以 2 台以上提案</li>
+    </ul>
+  </div>
+  <div class="box contact">
+    <h3>聯絡窗口</h3>
+    <div><b>蔡銘潔 Elsa｜產品經理</b>(02) 2219-1600 #3857<br><a href="mailto:Elsa_Tsai@xander.com.tw">Elsa_Tsai@xander.com.tw</a></div>
+    <div><b>萬志剛 CK｜技術諮詢</b>(02) 2219-1600 #3873<br><a href="mailto:CK_Wan@xander.com.tw">CK_Wan@xander.com.tw</a></div>
+  </div>
+</aside>
+</div>
+
+<footer id="foot"></footer>
+
+
+<script>
+// ===== 設定（改完存檔，把 index.html 重新拖到 Netlify 即可）=====
+window.REPORT_CONFIG = {
+  // Google Apps Script「網頁應用程式」部署網址；留空 = 測試模式（可以填寫、檢查欄位，但送出不會存檔）
+  GAS_URL: "https://script.google.com/macros/s/AKfycbyuY1nyzhYoE8PBqN6KxtfNtlBFkTEnzRCdT6_qEKWjKQeYwmV83KahUiicCcr3-CKj/exec",
+  // 頁尾聯絡窗口
+  CONTACT: "建達國際｜產品經理 蔡銘潔 Elsa Elsa_Tsai@xander.com.tw｜技術諮詢 萬志剛 CK CK_Wan@xander.com.tw｜(02) 2219-1600",
+  // 活動期間與名額（過了 PROMO_END 頁面會提示活動已結束，但仍可報備）
+  PROMO_START: "2026-10-01",
+  PROMO_END: "2026-12-25",
+  QUOTA: 50,
+};
+</script>
+<script>
+(function () {
+  const CFG = window.REPORT_CONFIG || {};
+  const GAS = (CFG.GAS_URL || '').trim();
+  const LS = 'vergeio-report-dealer';
+  const DEALER_KEYS = ['SI 公司名稱', '統一編號', '報備業務', '聯絡電話', '聯絡 Email', '建達部門', '建達業務'];
+  // 建達窗口：各部門業務名單（依內部 EIP 通訊錄 2026-10-14 整理；信箱只放在 Apps Script，不放網頁）
+  // 跟三星報備共用同一份名單：三星報備BAT\更新業務名單.bat 會兩邊一起改
+  const STAFF = {
+    '流通事業部': [
+      ['流通業務一處', ['王品潔 Jessy', '李怡慧 Bonnie', '陳柏翰 Bohan', '齊震 Kyle', '蔡世國 Roger', '羅健愷 Kai']],
+      ['流通業務二處', ['范芸萍 Yenping', '梁翊筠 Didi', '陳威翰 Wayne', '廖茗韋 Kevin', '蔡宗珉 Ming']],
+      ['流通業務三處', ['周益興 Samplus', '許琬惠 Wanhuei', '陳瑜嘉 Zack', '陳麒名 Chiming', '蘇進國 Jinguo']],
+      ['流通業務四處', ['鄭瑞芬 Claire']],
+      ['流通內勤業務助理處', ['江婕渝 Selina', '余貞伶 Vicky', '吳孟庭 Mandy', '吳瑞芬 Kiki', '杜宣儀 Kelly', '周亞蓁 Vicky', '林桂如 Angel', '姚雅文 Jessie', '洪雪珍 Jane', '胡美榕 Hannah', '張瑜珊 Sammi', '許明霞 Kitty', '陳佳祺 Judy', '陳靜玟 Swing', '彭新惠 Venus', '黃麗美 Ruby', '廖珊代 Sandy', '劉晏如 Luna', '蔣雅惠 Vickie', '蔡淑婷 Dolly', '謝金妃 Joyce', '謝素桂 Angela', '簡惠娟 Carol']],
+    ],
+    '加值事業部': [
+      ['加值業務一處', ['容承佑 Jamie', '曾文賜 Vincent', '劉書濬 Denny', '簡祐宏 Hong']],
+      ['加值業務二處', ['匡培德 Patrick', '張翔智 Greif', '陳耀明 David', '簡明裕 Nick', '凃志誠 Gimmy']],
+      ['加值業務助理處', ['何妤馨 Cathy', '吳清瑩 Chingying', '林彥馨 Vivian', '林莉庭 Tintin', '邱淑宜 Mandy', '高瑞琪 Ricky', '曹雅玲 Vivian', '莊桂琳 Linda', '彭詩萍 Daisy', '黃惠如 Joan', '潘玉琳 Celina', '蕭乃瑄 Elsa', '謝淑貞 Angela']],
+    ],
+    '商用事業部': [
+      ['商用業務一處', ['朱皇儕 Duncan', '陳冠霖 Jacky', '陳若蓁 Jan', '羅素玟 Mina']],
+      ['商用業務二處', ['范中霖 Hank']],
+      ['商用協銷', ['洪勢勛 Allen', '李美英 Ann', '黃永銘 Ming']],
+    ],
+    '家電事業部': [
+      ['家電業務一處', ['呂權哲 Leo', '傅斯玄 Max']],
+      ['家電業務二處', ['陳良斌 Jerry', '陳威成 Will', '葉智堯 Roder']],
+      ['家電業務三處', ['張昊誠 Jack', '張銘哲 Mark']],
+    ],
+  };
+  // 終端建議售價（每 node，軟硬體合計，未稅；3 年方案為 3 年總價）與活動獎金（每 node：報備領 15%、成交領 85%）
+  const PRICE = {
+    '輕量級': { '1 年租賃': 328000, '3 年租賃': 836000, '3 年租售': 898000 },
+    '中量級': { '1 年租賃': 388000, '3 年租賃': 988000, '3 年租售': 1068000 },
+  };
+  const BONUS = { '1 年租賃': [1500, 8500], '3 年租賃': [3000, 17000], '3 年租售': [3000, 17000] };
+
+  const $ = s => document.querySelector(s);
+  const form = $('#f');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const money = n => 'NT$ ' + Number(n).toLocaleString('en-US');
+  const roc = iso => { const p = String(iso).split('-'); return (p[0] - 1911) + '/' + +p[1] + '/' + +p[2]; };
+  const todayIso = () => new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10);   // 台北日期
+  $('#testBanner').hidden = !!GAS;
+  $('#foot').innerHTML = '© 建達國際股份有限公司 Xander International Corp.<br>本頁僅供 SI 夥伴向建達國際報備 VergeIO 專案使用';
+  $('#promo').innerHTML = [['活動期間', roc(CFG.PROMO_START) + '－' + roc(CFG.PROMO_END)], ['活動名額', '限量 ' + CFG.QUOTA + ' 台，售完為止'],
+    ['SI 專案獎金', '報備 15%｜成交 85%'], ['客戶到訪禮', '7-ELEVEN 禮券 500 元']]
+    .map(t => '<div><dt>' + esc(t[0]) + '</dt><dd>' + esc(t[1]) + '</dd></div>').join('');
+  if (todayIso() > CFG.PROMO_END) {
+    $('#endBanner').textContent = '促銷活動已於 ' + roc(CFG.PROMO_END) + ' 結束，仍可報備專案，價格與獎金請與建達確認。';
+    $('#endBanner').hidden = false;
+  }
+  const startedAt = Date.now();
+  const radio = name => { const r = form.querySelector('[name="' + name + '"]:checked'); return r ? r.value : ''; };
+  const checks = sel => [...document.querySelectorAll(sel + ' input:checked')].map(x => x.value);
+
+  // ---- 方案試算與提示 ----
+  function refresh() {
+    const cfg = radio('配置'), plan = radio('租賃方案');
+    const n = parseInt(form.elements['Node 數量'].value, 10) || 0;
+    const est = $('#est');
+    // 試算框一直顯示：獎金只看租賃方案與台數，售價還要配置；缺什麼就顯示「—」並提示要填哪幾項
+    const price = PRICE[cfg] && PRICE[cfg][plan];
+    const b = n > 0 && BONUS[plan];
+    const missing = [!cfg && '配置', !BONUS[plan] && '租賃方案', !(n > 0) && 'Node 數量'].filter(Boolean);
+    const term = plan !== '1 年租賃' ? '（3 年總價）' : '';
+    est.innerHTML =
+      '<div><small>建議售價合計（未稅）</small><b>' + (price && n > 0 ? money(price * n) : '—') + '</b></div>' +
+      '<div><small>報備獎金（15%）</small><b>' + (b ? money(b[0] * n) : '—') + '</b></div>' +
+      '<div><small>成交再領（85%）</small><b>' + (b ? money(b[1] * n) : '—') + '</b></div>' +
+      '<div class="note">' + (missing.length
+        ? '選好' + missing.join('、') + '後自動試算（配置還沒定可先選「尚未確定」，獎金照樣會算）。'
+        : price ? cfg + '／' + plan + ' × ' + n + ' node，依終端建議售價估算' + term + '。'
+        : '獎金依 ' + plan + ' × ' + n + ' node 估算；配置確定後才算得出售價。') +
+      '實際報價與獎金以建達核定為準。</div>';
+    const tips = [];
+    if (n === 1) tips.push(['', '單台 node 有 SSD 鏡像保護資料，但沒有伺服器 HA 容錯，適合分支據點或非關鍵系統；客戶跑關鍵系統請以 2 台以上提案。']);
+    if (n > CFG.QUOTA) tips.push(['warn', '本活動限量 ' + CFG.QUOTA + ' 台，超過的部分請轉為專案與建達討論。']);
+    const vm = parseInt(form.elements['現有 VM 數量'].value, 10) || 0;
+    if (vm && n && cfg === '輕量級' && vm / n > 20) tips.push(['', '每台 node 平均超過 20 個 VM，建議考慮中量級或增加 node，配置可請建達技術諮詢協助評估。']);
+    const sign = form.elements['預估簽約日'].value;
+    if (sign && sign > CFG.PROMO_END) tips.push(['warn', '預估簽約日在活動截止（' + roc(CFG.PROMO_END) + '）之後，促銷價與獎金可能不適用，請先跟建達確認。']);
+    if (checks('#needs').indexOf('需要 HA 容錯') >= 0 && n === 1) tips.push(['warn', '客戶需要 HA 容錯，但目前只填 1 台 node，HA 至少要 2 台。']);
+    $('#tips').innerHTML = tips.map(t => '<div class="tip ' + t[0] + '">' + esc(t[1]) + '</div>').join('');
+  }
+  form.addEventListener('input', refresh);
+  form.addEventListener('change', refresh);
+  refresh();   // 一打開就顯示試算框
+
+  // 到訪簡報選「已約好時間」才要填日期
+  const presSel = form.elements['到訪簡報'];
+  presSel.addEventListener('change', () => { $('#pDateBox').hidden = presSel.value !== '已約好時間'; });
+
+  // ---- 建達窗口：選部門後列出該部門業務 ----
+  const deptSel = form.elements['建達部門'], salesSel = form.elements['建達業務'];
+  function fillSales() {
+    const list = STAFF[deptSel.value] || [];
+    salesSel.innerHTML = '<option value="">' + (list.length ? '請選擇' : '請先選部門') + '</option>' +
+      list.map(g => '<optgroup label="' + esc(g[0]) + '">' + g[1].map(n => '<option>' + esc(n) + '</option>').join('') + '</optgroup>').join('');
+    salesSel.disabled = !list.length;
+  }
+  deptSel.addEventListener('change', fillSales);
+  // 帶回 SI 資料（部門要先填、列出業務後才能選業務；DEALER_KEYS 裡部門排在業務前面）
+  function setDealer(obj) {
+    DEALER_KEYS.forEach(k => {
+      if (obj[k] == null) return;
+      form.elements[k].value = obj[k];
+      if (k === '建達部門') fillSales();
+    });
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem(LS) || 'null');
+    if (saved) setDealer(saved);
+  } catch (e) {}
+
+  // ---- 統一編號：檢查碼驗算 + 依經濟部公司登記帶出公司名稱 ----
+  // 財政部 2023 起的規則：各位數 × 1,2,1,2,1,2,4,1，乘積取個位與十位相加後加總，能被 5 整除即正確；
+  // 第 7 碼是 7 時（7×4=28→10），加總後 +0 或 +1 任一能被 5 整除都算對
+  function banOk(v) {
+    if (!/^\d{8}$/.test(v)) return false;
+    const w = [1, 2, 1, 2, 1, 2, 4, 1];
+    let sum = 0;
+    for (let i = 0; i < 8; i++) { const p = +v[i] * w[i]; sum += Math.floor(p / 10) + (p % 10); }
+    if (v[6] === '7') return sum % 5 === 0 || (sum + 1) % 5 === 0;
+    return sum % 5 === 0;
+  }
+  const taxEl = form.elements['統一編號'], nameEl = form.elements['SI 公司名稱'], banInfo = $('#banInfo');
+  let lookSeq = 0;
+  const showBan = (cls, html) => { banInfo.className = 'ban ' + cls; banInfo.innerHTML = html; banInfo.hidden = !html; };
+  // 查到登記名稱 → 直接覆蓋並鎖住；查不到才開放手動輸入
+  const lockName = name => {
+    if (name == null) { if (nameEl.readOnly) nameEl.value = ''; nameEl.readOnly = false; return; }
+    nameEl.value = name; nameEl.readOnly = true; setErr(nameEl, '');
+  };
+  // 資料來源：g0v 台灣公司資料 API（資料取自經濟部，允許網頁直接呼叫）；查不到就讓 SI 手動填，不擋送出
+  const G0V = 'https://company.g0v.ronny.tw/api';
+  const INACTIVE = /解散|廢止|撤銷|歇業|撤回|停業/;
+  async function getJSON(url, ms) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), ms);
+    try { const r = await fetch(url, { signal: ctl.signal }); return r.ok ? await r.json() : null; }
+    catch (e) { return null; } finally { clearTimeout(timer); }
+  }
+  const g0vName = d => String(d['公司名稱'] || d['商業名稱'] || '').trim();
+  const g0vStatus = d => String(d['登記現況'] || d['公司狀況'] || d['現況'] || '').trim();
+
+  async function lookupBan() {
+    const v = taxEl.value.replace(/\D/g, '');
+    if (v !== taxEl.value) taxEl.value = v;
+    const my = ++lookSeq;
+    lockName(null);
+    if (v.length < 8) { showBan('', ''); return; }
+    if (!banOk(v)) { showBan('warn', '統一編號好像打錯了，請再核對一次'); return; }
+    showBan('', '查詢經濟部登記資料中…');
+    const g = await getJSON(G0V + '/show/' + v, 6000);
+    if (my !== lookSeq) return;   // 查詢途中統編又改了，丟掉舊結果
+    const name = g && g.data ? g0vName(g.data) : '';
+    if (!g) { showBan('', '暫時查不到登記資料，請直接填公司全名'); return; }
+    if (!name) { showBan('', '查無登記資料，請直接填公司全名'); return; }
+    const st = g0vStatus(g.data);
+    const warn = st && !/核准|營業/.test(st) ? '<br>⚠ 經濟部登記狀態為「' + esc(st) + '」，請確認是否正確' : '';
+    lockName(name);
+    showBan(warn ? 'warn' : 'ok', '✓ 已依經濟部登記帶入公司名稱' + warn);
+  }
+  taxEl.addEventListener('input', () => { setErr(taxEl, ''); lookupBan(); });
+  if (taxEl.value) lookupBan();
+
+  // 不知道統編 → 用公司名稱關鍵字查（只列營運中的公司），點選後填入統編、帶出名稱
+  const bsPanel = $('#bsPanel'), bsQ = $('#bsQ'), bsList = $('#bsList'), bsNote = $('#bsNote');
+  const FINDBIZ = '查不到的話（例如行號），請看發票、名片或問貴公司會計，也可到 <a href="https://findbiz.nat.gov.tw/" target="_blank" rel="noopener">經濟部商工登記公示資料查詢</a>。';
+  let bsSeq = 0, bsTimer = null;
+  $('#bsToggle').addEventListener('click', () => {
+    bsPanel.hidden = !bsPanel.hidden;
+    if (!bsPanel.hidden) { bsNote.innerHTML = FINDBIZ; bsQ.focus(); }
+  });
+  bsQ.addEventListener('input', () => { clearTimeout(bsTimer); bsTimer = setTimeout(searchName, 450); });
+  bsQ.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); clearTimeout(bsTimer); searchName(); } });   // 別讓 Enter 送出整張報備單
+  async function searchName() {
+    const q = bsQ.value.trim();
+    const my = ++bsSeq;
+    bsList.innerHTML = '';
+    if (q.length < 2) { bsNote.innerHTML = FINDBIZ; return; }
+    bsNote.textContent = '查詢中…';
+    const g = await getJSON(G0V + '/search?q=' + encodeURIComponent(q), 8000);
+    if (my !== bsSeq) return;
+    if (!g || !Array.isArray(g.data)) { bsNote.innerHTML = '暫時無法查詢。' + FINDBIZ; return; }
+    const list = g.data.filter(d => g0vName(d) && !INACTIVE.test(g0vStatus(d))).slice(0, 10).map(d => ({
+      ban: String(d['統一編號'] || ''), name: g0vName(d), city: String(d['公司所在地'] || d['地址'] || '').slice(0, 3) }))
+      .filter(c => /^\d{8}$/.test(c.ban));
+    if (!list.length) { bsNote.innerHTML = '找不到名稱含「' + esc(q) + '」的公司。' + FINDBIZ; return; }
+    bsList.innerHTML = list.map(c => '<button type="button" class="bs-item" data-ban="' + esc(c.ban) + '"><span>' + esc(c.name) +
+      '</span><small>統編 ' + esc(c.ban) + (c.city ? '｜' + esc(c.city) : '') + '</small></button>').join('');
+    bsNote.innerHTML = (list.length >= 10 ? '只列前 10 筆，找不到請把關鍵字打完整一點。' : '點選貴公司即可。') + '<br>' + FINDBIZ;
+  }
+  bsList.addEventListener('click', e => {
+    const b = e.target.closest('.bs-item');
+    if (!b) return;
+    taxEl.value = b.dataset.ban; setErr(taxEl, '');
+    bsPanel.hidden = true; bsQ.value = ''; bsList.innerHTML = '';
+    lookupBan();
+  });
+
+  // ---- 驗證 ----
+  function setErr(el, msg) {
+    const box = el.closest('.f') || el.parentElement;
+    box.classList.toggle('bad', !!msg);
+    const m = box.querySelector('.msg');
+    if (m) m.textContent = msg || '';
+  }
+  function validate() {
+    let first = null;
+    const fail = (el, msg) => { setErr(el, msg); if (!first) first = el; };
+    form.querySelectorAll('[name]').forEach(el => { if (el.type !== 'radio') setErr(el, ''); });
+    form.querySelectorAll('input[required],select[required],textarea[required]').forEach(el => {
+      if (!el.value.trim()) fail(el, '必填');
+    });
+    const tax = form.elements['統一編號'].value.trim();
+    if (tax && !banOk(tax)) fail(form.elements['統一編號'], '統一編號好像打錯了，請再核對一次');
+    const mail = form.elements['聯絡 Email'];
+    if (mail.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.value.trim())) fail(mail, 'Email 格式不對');
+    const vm = form.elements['現有 VM 數量'];
+    if (vm.value.trim() && !/^\d+$/.test(vm.value.trim())) fail(vm, '請填數字');
+    const node = form.elements['Node 數量'];
+    if (node.value.trim() && !(/^\d+$/.test(node.value.trim()) && +node.value > 0)) fail(node, '請填大於 0 的整數');
+    const pd = form.elements['簡報日期'];
+    if (presSel.value === '已約好時間' && !pd.value) fail(pd, '必填');
+    form.querySelectorAll('[data-group]').forEach(box => {
+      const ok = !!radio(box.dataset.group);
+      box.classList.toggle('bad', !ok);
+      box.querySelector('.msg').textContent = ok ? '' : '請選擇';
+      if (!ok && !first) first = box.querySelector('input');
+    });
+    return first;
+  }
+
+  // ---- 送出 ----
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const errBox = $('#formErr');
+    errBox.hidden = true;
+    const first = validate();
+    if (first) {
+      first.focus();
+      first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      errBox.textContent = '有欄位還沒填好，請看紅色標示。';
+      errBox.hidden = false;
+      return;
+    }
+    const data = {};
+    [...form.elements].forEach(el => {
+      if (!el.name || (el.type === 'radio' && !el.checked)) return;
+      data[el.name] = el.value.trim();
+    });
+    if (presSel.value !== '已約好時間') data['簡報日期'] = '';
+    data['客戶需求重點'] = checks('#needs').join('、');
+    data['加購服務'] = checks('#addons').join('、');
+    if (Date.now() - startedAt < 3000) data.website = data.website || 'fast';   // 太快送出多半是機器人
+
+    try {
+      if ($('#remember').checked) {
+        const keep = {}; DEALER_KEYS.forEach(k => keep[k] = data[k]);
+        localStorage.setItem(LS, JSON.stringify(keep));
+      } else localStorage.removeItem(LS);
+    } catch (x) {}
+
+    const btn = $('#submitBtn');
+    btn.disabled = true;
+    btn.textContent = '送出中…';
+    try {
+      let res;
+      if (GAS) {
+        const r = await fetch(GAS, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+        res = await r.json();
+      } else {
+        await new Promise(ok => setTimeout(ok, 600));
+        res = { ok: true, id: 'TEST-' + todayIso().replace(/-/g, ''), test: true };
+      }
+      if (!res.ok) throw new Error(res.error || '送出失敗');
+      showDone(res, data);
+    } catch (err) {
+      errBox.textContent = '送出失敗：' + (err.message || err) + '。請稍後再試，或直接聯絡建達業務窗口。';
+      errBox.hidden = false;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '送出報備';
+    }
+  });
+
+  function showDone(res, data) {
+    form.hidden = true;
+    $('#done').hidden = false;
+    $('#doneId').textContent = res.id || '—';
+    $('#doneText').textContent = res.test
+      ? '（測試模式，資料沒有存檔）'
+      : '建達國際將於 2 個工作天內確認並回覆' + (data['聯絡 Email'] ? '，收件確認信已寄到 ' + data['聯絡 Email'] : '') + '。如需補充請註明報備編號。';
+    const rows = [['SI 夥伴', data['SI 公司名稱']], ['終端客戶', data['客戶名稱']],
+      ['方案', data['配置'] + '／' + data['租賃方案'] + ' × ' + data['Node 數量'] + ' node'],
+      ['預估簽約日', data['預估簽約日']], ['到訪簡報', data['到訪簡報'] + (data['簡報日期'] ? ' ' + data['簡報日期'] : '')],
+      ['建達窗口', data['建達部門'] + ' ' + data['建達業務']]];
+    $('#doneSum').innerHTML = rows.map(r => '<div><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></div>').join('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  $('#again').addEventListener('click', () => {
+    const keep = {}; DEALER_KEYS.forEach(k => keep[k] = form.elements[k].value);
+    form.reset();
+    setDealer(keep);
+    $('#pDateBox').hidden = true;
+    refresh();
+    $('#done').hidden = true;
+    form.hidden = false;
+    window.scrollTo({ top: 0 });
+  });
+})();
+</script>
+</body>
+</html>
