@@ -7,7 +7,7 @@
 <title>VergeIO 專案報備</title>
 <!-- PWA：可安裝到手機／電腦桌面，離線也打得開 -->
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#14233a">
+<meta name="theme-color" content="#D9693B">
 <meta name="application-name" content="VergeIO報備">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,17 +18,18 @@
 <style>
 :root{
   --ground:#f3f4f6; --panel:#ffffff; --ink:#1b2430; --muted:#5f6b7a; --faint:#8a94a3; --line:#dde1e7; --line-soft:#eceef2;
-  --brand:#14233a; --brand-2:#24395a; --brand-ink:#ffffff; --accent:#c8661a; --sel:#eef2f8; --fb:#c9ced6;
+  /* VergeIO 企業識別色：橘 #D9693B、靛藍 #1F2C89（取自 verge.io）；小字與按鈕用加深的橘以符合對比度 */
+  --brand:#D9693B; --brand-2:#1F2C89; --brand-ink:#ffffff; --accent:#B04E26; --sel:#eef0fa; --fb:#c9ced6;
   --ok:#2f6b3a; --err:#b42318; --err-bg:#fdf1f0; --warn-bg:#fbf5ea; --warn-ink:#6e4a0e; --warn-line:#d9a441;
-  --field:#ffffff; --head:#ffffff; --btn:#14233a; --btn-hover:#24395a;
+  --field:#ffffff; --head:#ffffff; --btn:#B9542B; --btn-hover:#A34723;
   --body:"Microsoft JhengHei","微軟正黑體","Noto Sans TC","PingFang TC",system-ui,sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root{
   --ground:#0f141b; --panel:#171e28; --ink:#e6e9ee; --muted:#a3adba; --faint:#7c8695; --line:#2c3644; --line-soft:#232c38;
-  --brand:#8fb0de; --brand-2:#8fb0de; --brand-ink:#ffffff; --accent:#e08a43; --sel:#1d2a3c; --fb:#36414f;
+  --brand:#D9693B; --brand-2:#a9b3f5; --brand-ink:#ffffff; --accent:#f09a6c; --sel:#1e2347; --fb:#36414f;
   --ok:#8fcf9b; --err:#ff9a8f; --err-bg:#331c1c; --warn-bg:#2f2614; --warn-ink:#efd7a6; --warn-line:#b8862e;
-  --field:#121922; --head:#171e28; --btn:#2c4670; --btn-hover:#36578a; color-scheme:dark}}
+  --field:#121922; --head:#171e28; --btn:#B9542B; --btn-hover:#c8602f; color-scheme:dark}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
@@ -97,7 +98,7 @@ label.f,div.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-wei
 input,select,textarea{font:inherit;font-size:16px;font-weight:400;color:var(--ink);background:var(--field);border:1px solid var(--fb);border-radius:4px;padding:9px 11px;min-height:44px;width:100%}
 input::placeholder,textarea::placeholder{color:var(--faint)}
 textarea{min-height:84px;resize:vertical}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(36,57,90,.15)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(31,44,137,.18)}
 .bad input,.bad select,.bad textarea{border-color:var(--err);background:var(--err-bg)}
 .bad .radios label{border-color:var(--err)}
 .msg{color:var(--err);font-size:12px;font-weight:400}
