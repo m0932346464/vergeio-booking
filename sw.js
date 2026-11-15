@@ -1,6 +1,6 @@
 // VergeIO 專案報備 — Service Worker
 // 改了 index.html／圖示要讓舊版手機也換新：把 VERSION 改掉（例如日期）再上傳即可。
-const VERSION = 'vergeio-20261115';
+const VERSION = 'vergeio-20261115b';
 const SHELL = [
   './',
   './index.html',
